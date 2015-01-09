@@ -1,0 +1,8 @@
+<div class="well">
+<%= bootstrap_form_for :reservation, url: reservations_path  do |f| %>
+  <%= f.text_field :name %>
+  <%= f.number_field :party_size %>
+  <%= f.datetime_select :date_time %>
+  <%= f.submit "Request Reservation" %>
+<% end %>
+</div>

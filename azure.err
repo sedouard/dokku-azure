@@ -1,0 +1,13 @@
+Tue Jan 06 2015 14:22:44 GMT-0800 (PST):
+[Error: location or affinity group is required for a new cloud service]
+Error: location or affinity group is required for a new cloud service
+    at createNewHostedService (/usr/local/lib/node_modules/azure-cli/lib/commands/asm/vm/vmclient.js:3551:23)
+    at /usr/local/lib/node_modules/azure-cli/lib/commands/asm/vm/vmclient.js:3656:13
+    at /usr/local/lib/node_modules/azure-cli/node_modules/azure/node_modules/azure-mgmt-compute/lib/computeManagementClient.js:12225:16
+    at Parser.<anonymous> (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/lib/xml2js.js:246:20)
+    at Parser.emit (events.js:95:17)
+    at Object.saxParser.onclosetag (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/lib/xml2js.js:225:24)
+    at emit (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/node_modules/sax/lib/sax.js:589:33)
+    at emitNode (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/node_modules/sax/lib/sax.js:594:3)
+    at closeTag (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/node_modules/sax/lib/sax.js:834:5)
+    at Object.write (/usr/local/lib/node_modules/azure-cli/node_modules/azure-common/node_modules/xml2js/node_modules/sax/lib/sax.js:1253:29)

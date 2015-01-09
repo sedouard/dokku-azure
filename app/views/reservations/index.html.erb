@@ -1,0 +1,17 @@
+<h1>All Reservations</h1>
+ 
+<table class="table">
+  <tr>
+    <th>Name</th>
+    <th>Party Size</th>
+    <th>Date</th>
+  </tr>
+ 
+  <% @reservations.each do |reservation| %>
+    <tr>
+      <td><%= reservation.name %></td>
+      <td><%= reservation.party_size %></td>
+      <td><%= reservation.date_time %></td>
+    </tr>
+  <% end %>
+</table>
