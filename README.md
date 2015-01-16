@@ -133,7 +133,7 @@ Thats's it! The web page should redirect you to the dokku-alt repository afterwa
 
 This guide goes into launching a Ruby app but you can easily launch most other types of apps to!
 
-You can use your current Rails app or Clone [this app](https://github.com/sedouard/rails-restaurant) as an example. This app is a 'restaurant reservation' app and cut me some slack, aside from not being the worlds best front-end developer, I built it within 24 hours of learning Ruby and Rails :-).
+You can use your current Rails app or Clone [this app](https://github.com/sedouard/dokku-azure) as an example. This app is a 'restaurant reservation' app and cut me some slack, aside from not being the worlds best front-end developer, I built it within 24 hours of learning Ruby and Rails :-).
 
 The app requires a a PostgreSql server and we'll deploy that after deploying the app.
 
