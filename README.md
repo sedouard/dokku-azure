@@ -101,12 +101,12 @@ You can use your current Rails app or Clone [this app](https://github.com/sedoua
 In your git repository add a new remote to your server:
 
 ```
-git remote add dokku dokku@<your_domain_name>.com
+git remote add dokku dokku@<your_domain_name>.com:your_app_name
 ```
 
 Note that using the user name `dokku` is required!
 
-Now just push the repository!
+Now just push the repository! The remote repository is created on-the-fly by Dokku.
 
 ```
 git push dokku master
@@ -134,4 +134,46 @@ Note: if you do this for your own app, make sure that you include a Procfile lik
 Finally this app needs to have a database, if you notice, browsing to your app doesn't work, thats because you need to tell dokku to launch and link a PostgreSql to your app. This is really easy though. In this app, you'll see that our [database.yml](config/database.yml) contains a url with an environment variable that is injected by Dokku. This is what happens on the Heroku platform as well:
 
 ```
+production:
+  <<: *default
+  database: my_database_production
+  url: <%= ENV['DATABASE_URL'] %>
 ```
+
+To do this ssh into your virtual machine:
+
+```
+ssh user_name@your_domain.com
+```
+
+Tell Dokku you want a PostgreSql database:
+
+```
+dokku postgresql:create app_name
+```
+
+**Important:** app_name must be the name of the app you deployed.
+
+Linking your Postgresql database container to your Rails app container is easy:
+
+```
+dokku postgresql:link app_name database_name
+```
+
+Since we're using rails, we have to do a database migration. In order to do this we can tell dokku to run the command within the Rails container by simply doing:
+
+```
+dokku run app_name rake db:migrate
+```
+
+And thats it! Navigate to http://app_name.your_domain.com and you should see my super basic app running:
+
+![](ScreenShots/ss1.png)
+
+Try creating a reservation and viewing them, this demonstrates that the database is actually up and running on your Dokku host.
+
+## In Closing...
+
+Hope this helps you get your own 'Heroku' running on your cloud platform of choice. With Dokku, you can pretty much run your entire application stack and it takes a lot of the nuances away of running particular services with the speed of docker containers.
+
+Go fourth and conquer!
