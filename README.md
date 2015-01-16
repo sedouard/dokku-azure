@@ -31,7 +31,7 @@ http://node-app.my_dokku_domain.com
 
 ## Getting the CLI Setup
 
-Make sure you have an [Azure subscription] and install [Nodejs](http://nodejs.org).
+Make sure you have an [Azure subscription](http://azure.microsoft.com/en-us/) and install [Nodejs](http://nodejs.org).
 
 ```
 npm install azure-cli -g
