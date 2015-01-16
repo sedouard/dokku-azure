@@ -1,4 +1,4 @@
-# Heroku Meets Azure - The Easiest Way to Deploy Your Rails App
+# Heroku Meets Azure - The Easiest Way to Deploy Your Rails App on Azure 
 
 [Heroku](http://heroku.com) pretty much created the gold standard of Platform as a Service (PaaS) web deployments for open source web stacks based on Ruby, Python, Node and Php.
 
@@ -13,6 +13,8 @@ I did some digging and there's a great open-source framework called [Dokku](http
 Dokku will automatically launch your Ruby, PostgreSql, Node, Python, MongoDB etc service easily with docker containers. What does this mean?
 
 **YOU CAN BASICALLY RUN HEROKU ON AZURE**
+
+(well not exactly but you get the point)
 
 How awesome is that?
 
