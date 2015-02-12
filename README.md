@@ -117,7 +117,8 @@ The first thing it wants from you is your public key. This is super easy to do, 
 
 ```
 cd ~/.ssh
-ssh-keygen id_rsa
+ssh-keygen 
+id_rsa
 # enter a good passphrase
 ls
 # now you'll see two files id_rsa and id_rsa.pub
