@@ -1,5 +1,7 @@
 # Heroku Meets Azure - The Easiest Way to Deploy Your Rails App on Azure 
 
+**Update:** To launch vanilla Dokku onto azure, follow the [Dokku official Documentation for Azure](http://progrium.viewdocs.io/dokku/getting-started/install/azure/).
+--
 [Heroku](http://heroku.com) pretty much created the gold standard of Platform as a Service (PaaS) web deployments for open source web stacks based on Ruby, Python, Node and Php.
 
 Microsoft Azure also offers a similar service as Heroku called [Azure Websites](http://azure.microsoft.com/en-us/services/websites/). This service handles automagic deployments via Git and popular source control providers like [Github](http://github.com) and [Bitbucket](http://bitbucket.com). 
