@@ -33,6 +33,8 @@
 .repl_history
 build/
 
+## OSX DS_STORE
+.DS_STORE
 ## Documentation cache and generated files:
 /.yardoc/
 /_yardoc/
