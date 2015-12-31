@@ -1,18 +1,17 @@
 # Heroku Meets Azure - The Easiest Way to Deploy Your Rails App on Azure 
 
-**Update:** To launch vanilla Dokku onto azure, follow the [Dokku official Documentation for Azure](http://progrium.viewdocs.io/dokku/getting-started/install/azure/).
 --
 [Heroku](http://heroku.com) pretty much created the gold standard of Platform as a Service (PaaS) web deployments for open source web stacks based on Ruby, Python, Node and Php.
 
 Microsoft Azure also offers a similar service as Heroku called [Azure Websites](http://azure.microsoft.com/en-us/services/websites/). This service handles automagic deployments via Git and popular source control providers like [Github](http://github.com) and [Bitbucket](http://bitbucket.com). 
 
-Although Azure Websites has support for .NET and mostly supports PHP, Node, and Python it has no support for Ruby. In addition somethings like [native modules](http://azure.microsoft.com/en-us/documentation/articles/nodejs-use-node-modules-azure-apps/) are not supported on the platform. 
+Although Azure Websites has support for .NET and mostly supports PHP, Node, and Python it has no support for Ruby. In addition some things like [native modules](http://azure.microsoft.com/en-us/documentation/articles/nodejs-use-node-modules-azure-apps/) are not supported on the platform. 
 
-Also, Azure Websites under the covers is Windows-based and there is no Linux option, making some subtle Windows-specific issue appear in your deployment environment when it may not happen in your development environment.
+Also, Azure Websites under the covers is Windows-based and there is no Linux option, making some subtle Windows-specific issues appear in your deployment environment when it may not happen in your development environment.
 
-I did some digging and there's a great open-source framework called [Dokku](https://github.com/progrium/dokku) which is basically Heroku-in-a-box. That means that you can run all of your open source stacks with a simple `git push` command with the huge power of Azure behind your back. 
+I did some digging and there's a great open-source framework called [Dokku](https://github.com/progrium/dokku) which is basically Heroku-in-a-box. That means that you can run all of your open source stacks with a simple `git push` command on Azure. 
 
-Dokku will automatically launch your Ruby, PostgreSql, Node, Python, MongoDB etc service easily with docker containers. What does this mean?
+Dokku will automatically launch your Ruby, PostgreSql, Node, Python, MongoDB etc services easily with docker containers. What does this mean?
 
 **YOU CAN BASICALLY RUN HEROKU ON AZURE**
 
@@ -20,119 +19,67 @@ Dokku will automatically launch your Ruby, PostgreSql, Node, Python, MongoDB etc
 
 How awesome is that?
 
-Now personally I'm an [Express](http://expressjs.com) developer and prefer smaller web frameworks, which is pretty much the opposite of Rails. However I do understand there are a ton of people who love Rails and I'd love to see more Rails sites deployed on Azure.
-
 Keep reading for this quick how-to:
 
 # Getting Started with Dokku
 
-Before you get started, you're gonna need your own Domain name. The way it works is that Dokku will place your apps in subdomains of the domain that you give it. For example say that you had a Node app and a Rails app deployed. You would access those apps from:
+Before you get started, you're gonna need your own Domain name. The way it works is that Dokku will place your apps in subdomains of the domain that you give it. This is called **Virtual Host Naming**. You can use any domain name registrar or you can use [xip.io](http://xip.io) to use your public ip address as a domain name:
 
 ```
-http://rails-app.my_dokku_domain.com
-http://node-app.my_dokku_domain.com
+http://rails-app.222.222.222.xip.io
+http://node-app.222.222.222.xip.io
 ```
 
-## Getting the CLI Setup
+You can follow the [Dokku official Documentation for Azure](http://progrium.viewdocs.io/dokku/getting-started/install/azure/) which will have you [deploy the template to azure](https://azure.microsoft.com/en-us/documentation/templates/dokku-vm/).
 
-Make sure you have an [Azure subscription](http://azure.microsoft.com/en-us/) and install [Nodejs](http://nodejs.org).
-
-```
-npm install azure-cli -g
-# this will open up your default browser so you can sign in and download your .publishsettings file
-azure account download
-```
-
-## Creating a Linux VM
-
-I personally love using Ubuntu because its so user friendly. With Dokku, you'll want to be using Ubuntu 14.04 LTS as thats where it is supported best:
-
-```
-# grep for all ubuntu 14.04 vms
-azure vm list | grep 14_04
-# create your ubuntu vm
-azure vm create your-vm-name b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20141125-en-us-30GB user_name -l 'West US' --ssh 22
-```
-
-West US is a data center name. You can list the available azure deployment locations by doing
-
-```
-azure vm location list
-```
-
-You'll be prompted for a password - this is one you'll use to ssh into the machine.
-
-## Installing Dokku-alt
-
-In this guide, I'm going to use [Dokku-alt](http://github.com/dokku-alt/dokku-alt) which is a great fork of Dokku and is basically Dokku on steroids. It has extended plugins preinstalled for PostgreSql, Mongodb, Node/Express, Ruby/Rails -- you name it, you got it. The repo has great installation instructions and mine are based off of those but specifically for Rails and PostgreSql.
-
-To install, just run this simple bootstrapping shell script:
-
-```
-sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/dokku-alt/dokku-alt/master/bootstrap.sh)"
-```
-
-Afterwards the script will kick off a Sinatra web server where you can access the configuration portal. This is the easiest way to configure the dokku server although you can [configure it manually](https://github.com/dokku-alt/dokku-alt#manual-configuration) as well.
+After you've completed the deployment continue reading.
 
 ## Setting up a Domain Name
 
-You're going to need a domain from a domain name service provider like [Godaddy](http://godaddy.com) or [Namecheap](http://namecheap.com).
+If you decide to get a domain name from a registrar like [Godaddy](http://godaddy.com) or [Namecheap](http://namecheap.com) you'll need to setup an A record to point to your Dokku instance on Azure.
 
 In your DNS zone file create two A entries:
 
 From  | To
 ------------- | -------------
-@  | (your azure virtual ip)
-*  | (your azure virtual ip)
+@  | (your azure public ip)
+*  | (your azure public ip)
 
-You can get your virtual IP address from your virtual machine dashboard on the right hand side (again, using the class manage.windowsazure.com portal):
+Browse to the [Azure portal](http://portal.azure.com) and navigate to the resource group you deployed your Template to. You can get your public IP address from the Public IP blade which is inside the Resource Group blade.
 
 ![](ScreenShots/ss5.png)
 
-## Opening up the HTTP and Configuration Endpoints
-
-Although Dokku serves its 1st experience configuration dashboard through port 2000, and hosts websites through port 80, you can't actually get to those from the outside world until you open up those endpoints.
-
-Go to your virtual machine in the classic azure portal (portal.windowsazure.com) and select the endpoints menu:
-
-![](ScreenShots/ss2.png)
-
-## Configuring Dokku
-
-Open ports **2000** and **80** since you'll be operating HTTP traffic to and from your site:
-
-![](ScreenShots/ss3.png)
-
-Navigate to `http://your-domain-name.com:2000` and you'll see the Dokku admin portal waiting for you:
+In your browser of choice, navigate to `http://[[dnsNameForPublicIP]].[[location]].cloudapp.azure.com`. Where [[dnsNameForPublicIP]] and [[location]] are template parameters you used to deploy the template. You'll see the Dokku admin page waiting for you:
 
 ![](ScreenShots/ss4.png)
 
-Now you can validate everything is working A-OK if you can navigate to `http://yourdomainname.com` and see the generic nginx server message:
+You can test if your DNS Zone settings are working correctly because browsing to `http://yourdomain.com` will also show the Dokku setup page. Now you have your domain setup!
 
-![](ScreenShots/ss6.png)
-
-Now you have your domain setup!
 
 ## Configuring Dokku
 
-The first thing it wants from you is your public key. This is super easy to do, just do:
 
-```
+The first thing Dokku setup page wants from you is your deployment public key. This is super easy to do, just do:
+
+```bash
 cd ~/.ssh
 ssh-keygen 
-id_rsa
+# this is the path where you want your new key to be
+.dokku-deploy
 # enter a good passphrase
 ls
-# now you'll see two files id_rsa and id_rsa.pub
+# now you'll see two files dokku-deploy and dokku-deploy.pub
 # copy the output from the command below
-cat id_rsa.pub
+cat .dokku-deploy.pub
 ```
 
-Now paste to the 'public key' box on the dokku setup website.
+Now copy+paste the output of the public key to the 'public key' box on the dokku setup website.
 
-Next, enter your domain name (such as `my_dokku_host.com`), by default Dokku will just launch your app to a specific port but on Azure, since it will detect the domain your-vm-name.cloudapp.net, Dokku will automatically use that.
+**Note**: You shouldn't use the same SSH public key you used to deploy the template. Instead be sure to create a new one for dokku deployments.
 
-Thats's it! The web page should redirect you to the dokku-alt repository afterwards. 
+Next, enter your domain name (such as `my_dokku_host.com`, or `10.72.29.23.xip.io`), by default Dokku will just launch your app to a specific port checking off `Use virtual host naming` allows you to use a domain name prefix for your app.
+
+That's it! The web page should redirect you to the [dokku documentation](http://dokku.viewdocs.io/dokku/application-deployment/) page afterwards. 
 
 ## Deploying your Rails App
 
@@ -140,15 +87,26 @@ This guide goes into launching a Ruby app but you can easily launch most other t
 
 You can use your current Rails app or Clone [this app](https://github.com/sedouard/dokku-azure) as an example. This app is a 'restaurant reservation' app and cut me some slack, aside from not being the worlds best front-end developer, I built it within 24 hours of learning Ruby and Rails :-).
 
-The app requires a a PostgreSql server and we'll deploy that after deploying the app.
+The app requires a PostgreSql server and we'll deploy that after deploying the app.
 
 In your git repository add a new remote to your server:
 
-```
-git remote add dokku dokku@<your_domain_name>.com:your_app_name
+```bash
+git remote add dokku dokku@<your_domain_name>:app_name
+# you can also use the public ip
+git remote add dokku dokku@72.42.11.24:app_name
 ```
 
 Note that using the user name `dokku` is required!
+
+Add your corresponding ssh private key for the public deployment key you entered in the Dokku setup page:
+
+```
+# if your ssh-agent isn't already running run this command
+eval `ssh-agent -s`
+# now add the dokku deployment private key to your agent
+ssh-add .dokku-deploy
+```
 
 Now just push the repository! Your ssh key you created in your `~/.ssh` folder should authenticate you. The remote repository is created on-the-fly by Dokku.
 
@@ -173,9 +131,9 @@ remote: -----> Cleaning up ...
 Note: if you do this for your own app, make sure that you include a Procfile like [this one](https://github.com/sedouard/rails-restaurant/blob/master/Procfile). If you're already familiar with Heroku you'll know that its required for Heroku apps.
 
 
-## Setting up PostgresSql
+## Setting up Postgres
 
-Finally this app needs to have a database, if you notice, browsing to your app doesn't work, thats because you need to tell dokku to launch and link a PostgreSql to your app. This is really easy though. In this app, you'll see that our [database.yml](config/database.yml) contains a url with an environment variable that is injected by Dokku. This is what happens on the Heroku platform as well:
+Finally this app needs to have a database, if you notice, browsing to your app doesn't work. That’s because you need to tell dokku to launch and link a Postgres database to your app. This is really easy though because Dokku comes with a variety of [plugins](http://dokku.viewdocs.io/dokku/plugins/#official-plugins-beta). In this app, you'll see that our [database.yml](config/database.yml) contains a URL with an environment variable that is injected by Dokku:
 
 ```
 production:
@@ -184,33 +142,41 @@ production:
   url: <%= ENV['DATABASE_URL'] %>
 ```
 
-To do this, ssh into your virtual machine:
+To do this, ssh into the Dokku VM using the login you specified in the Dokku template:
 
 ```
-ssh user_name@your_domain.com
+# be sure to ssh-add your VM login private key
+ssh vm_username@your_domain.com
 ```
 
-Tell Dokku you want a PostgreSql database:
+Tell Dokku you want install the postgres plugin:
+
+``` 
+sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
+```
+
+Now create the postgres database:
 
 ```
-dokku postgresql:create app_name
+dokku postgres:create my-postgres
 ```
-
-**Important:** app_name must be the name of the app you deployed!
 
 Linking your Postgresql database container to your Rails app container is easy:
 
 ```
-dokku postgresql:link app_name database_name
+dokku postgres:link my-postgres app_name
 ```
 
-Since we're using rails, we have to do a database migration. In order to do this we can tell dokku to run the rake command within the Rails container by simply doing:
+**Important:** app_name must be the name of the app you deployed!
+
+
+Since we're using rails, we have to do a database migration. In order to do this, we can tell dokku to run the `rake` command within the Rails container by simply doing:
 
 ```
 dokku run app_name rake db:migrate
 ```
 
-And thats it! Navigate to http://app_name.your_domain.com and you should see my super basic app running:
+And thats it! Navigate to `http://app_name.your_domain.com` and you should see my super basic app running:
 
 ![](ScreenShots/ss1.png)
 
@@ -222,4 +188,8 @@ Hope this helps you get your own 'Heroku' running on your cloud platform of choi
 
 With Dokku, you can pretty much run your entire application stack and it takes a lot of the nuances away of running particular services with the speed of docker containers. What's even more awesome are the plugins for the various types of databases you may want to launch as well.
 
+You can see this as a great alternative to Azure Websites if you're looking to run ruby on rails or just things that don't work quite right on Windows. Although it doesn't have the scale of Azure Websites, so if you're looking for scalability and the friendliness of Dokku checkout the [deis project](http://deis.io).
+
 Go fourth and conquer!
+
+
